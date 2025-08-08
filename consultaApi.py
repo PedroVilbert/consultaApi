@@ -1,47 +1,34 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# Abrir o navegador
+# Iniciar navegador
 navegador = webdriver.Chrome()
-
-# Acessar o site
 navegador.get("https://www.astro.com/horoscope")
 navegador.maximize_window()
 
-# Esperar a página carregar
-time.sleep(3)
+wait = WebDriverWait(navegador, 10)
 
-# Selecionar todos os links de signos (dentro da div com classe 'hpzod')
-lista_botoes = navegador.find_elements(By.CSS_SELECTOR, ".hpzod a")
+# Esperar e clicar no botão do menu
+menu_botao = wait.until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "img.navlink.navbar-toggler-left"))
+)
+menu_botao.click()
 
-# Iterar pelos botões até encontrar o signo
-signo = "Aries"
-for botao in lista_botoes:
-    texto = botao.get_attribute("innerHTML")
-    if signo in texto:
-        botao.click()
-        break
+bnt_free_horoscopes = wait.until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, ".xrubrik.rubrik_0"))
+)
+bnt_free_horoscopes.click()
+# lista_botoes_menu = navegador.find_elements(By.CSS_SELECTOR, "rubrik.rubrik_0")
+# for botao in lista_botoes_menu:
+#     if "Free Horoscopes"== botao.text:
+#         botao.click()
 
-# Esperar o conteúdo da nova página carregar
-time.sleep(5)
+lista2_botoes_menu = navegador.find_elements("class name", "inner show")
 
-# Extrair todos os parágrafos visíveis e juntar o texto
-paragrafos = navegador.find_elements(By.TAG_NAME, "p")
-texto_completo = "\n".join([p.text for p in paragrafos if p.text.strip() != ""])
 
-# Limpar o texto removendo informações extras a partir de "Short excerpt"
-indice = texto_completo.find("Short excerpt")
-if indice != -1:
-    texto_limpo = texto_completo[:indice].strip()
-else:
-    texto_limpo = texto_completo
-
-print("Descrição limpa:\n")
-print(texto_limpo)
-
-# Esperar para leitura (opcional)
-time.sleep(5)
-
-# Fechar o navegador
+time.sleep(10)
 navegador.quit()
+
